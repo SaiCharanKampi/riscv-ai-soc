@@ -122,3 +122,80 @@ BEQ -4 -> imm_out = -4
 All tests passed.
 
 Waveform verification confirms correct extraction and sign extension.
+
+6) Instruction Decoder (Control Signal Generation)
+Objective
+Design a simple instruction decoder that interprets the instruction opcode and generates control signals required by the processor datapath.
+The decoder determines how the processor should behave for each instruction.
+
+Why a Decoder is Needed?
+The processor only sees a 32-bit instruction.
+It does not directly understand instructions like:
+ADD x3, x1, x2
+SW x3, 8(x1)
+BEQ x1, x2, 16
+Instead, the processor reads the opcode field and generates control signals that guide the datapath.
+These control signals determine:
+whether a register should be written
+whether memory should be read
+whether memory should be written
+whether the ALU should use an immediate value
+whether a branch operation should occur
+Control Signals Implemented
+Signal	Purpose
+reg_write	Enables writing data to destination register
+mem_read	Enables reading from memory
+mem_write	Enables writing to memory
+alu_src	Selects ALU input (register or immediate)
+branch	Indicates a branch instruction
+Opcode Detection
+The decoder reads the opcode from the instruction:
+opcode = instr[6:0]
+Each opcode corresponds to an instruction type.
+Instruction	Opcode
+R-type (ADD/SUB)	0110011
+I-type (ADDI)	0010011
+Load (LW)	0000011
+Store (SW)	0100011
+Branch (BEQ)	1100011
+Decoder Behavior
+R-Type (ADD)
+reg_write = 1
+alu_src   = 0
+mem_read  = 0
+mem_write = 0
+branch    = 0
+
+I-Type (ADDI)
+reg_write = 1
+alu_src   = 1
+mem_read  = 0
+mem_write = 0
+branch    = 0
+
+Load (LW)
+reg_write = 1
+mem_read  = 1
+alu_src   = 1
+
+Store (SW)
+mem_write = 1
+alu_src   = 1
+reg_write = 0
+Branch (BEQ)
+branch = 1
+reg_write = 0
+Verification
+
+The decoder was verified using a simple testbench in ModelSim.
+
+Tested instructions:
+
+Instruction	Expected Behavior
+ADD	register write enabled
+ADDI	register write + immediate ALU input
+LW	memory read enabled
+SW	memory write enabled
+BEQ	branch signal enabled
+
+Simulation output confirmed that the control signals were generated correctly for each instruction.
