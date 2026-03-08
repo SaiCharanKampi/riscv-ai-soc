@@ -199,3 +199,18 @@ SW	memory write enabled
 BEQ	branch signal enabled
 
 Simulation output confirmed that the control signals were generated correctly for each instruction.
+Register File
+
+Implemented a 32 × 32-bit register file supporting:
+
+• Two read ports
+• One write port
+• Register x0 hardwired to zero
+
+Verification performed in ModelSim using directed tests:
+- Write/read x1
+- Write/read x2
+- Dual register reads
+- Attempted write to x0
+
+All tests passed.
